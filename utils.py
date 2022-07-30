@@ -109,11 +109,6 @@ def preprocess(X_train, y_train, X_test, y_test, num_classes, num_features, prin
   X_train = X_train / 255.
   X_test = X_test / 255.
 
-  # Convert target classes to categorical ones (one-hot encoding)
-  y_train = to_categorical(y_train, num_classes)
-  y_test = to_categorical(y_test, num_classes)
-
-
   if print_summary:
     print("Training Inputs:")
     data_summary(X_train)
