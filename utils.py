@@ -20,7 +20,7 @@ from keras import Input
 from tensorflow.keras import initializers
 from tensorflow.keras import regularizers
 
-def create_mlp(name, n_hidden_1, n_hidden_2, num_features, num_classes, gaussian_init=False, gaussian_mean=-1, kernel_reg=None, a_reg=-1, dropout_layers=False, dropout_prob=-1):
+def create_mlp(name, n_hidden_1, n_hidden_2, num_features, num_classes, gaussian_init=False, gaussian_mean=-1, kernel_reg=None, a_reg=-1, dropout_layers=False, dropout_prob=-1, print_summary=False):
   
   kwargs = dict()
   
@@ -43,7 +43,8 @@ def create_mlp(name, n_hidden_1, n_hidden_2, num_features, num_classes, gaussian
   mlp.add(keras.layers.Dense(name="output_layer", units=num_classes, activation="softmax", **kwargs))
   if dropout_layers == True: mlp.add(keras.layers.Dropout(dropout_prob))
   
-  mlp.summary()
+  if print_summary:
+    mlp.summary()
 
   return mlp
 
