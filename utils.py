@@ -51,7 +51,6 @@ import matplotlib.pyplot as plt
 
 def disp_results(mlp, X_train, y_train, X_test, y_test, history):
 
-  # TODO add comments and titles
   print("Evaluation on training data:")
   train_results = mlp.evaluate(X_train, y_train)
   print("Evaluation on testing data:")
