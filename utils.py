@@ -31,7 +31,7 @@ def create_mlp(name, n_hidden_1, n_hidden_2, num_features, num_classes, gaussian
     kwargs["kernel_regularizer"] = regularizers.l2(a_reg)
 
   if kernel_reg == "l1":
-    kwargs["kernel_regulizer"] = regularizers.l1(a_reg)
+    kwargs["kernel_regularizer"] = regularizers.l1(a_reg)
 
   mlp = keras.Sequential(name=name)
 
@@ -63,14 +63,22 @@ def disp_results(mlp, X_train, y_train, X_test, y_test, history):
   accuracy_train = history.history["accuracy"]
   accuracy_test = history.history["val_accuracy"]
 
-  plt.plot(loss_train, label="loss train")
-  plt.plot(loss_test, label="loss test")
+  plt.ion()
+
+  plt.plot(loss_train, label="Training")
+  plt.plot(loss_test, label="Testing")
+  plt.title(mlp.name + " - Loss curves")
   plt.legend()
+  plt.grid()
+  plt.savefig("fig/" + mlp.name + "_Loss.jpg", dpi=1200)
   plt.show()
 
-  plt.plot(accuracy_train, label="accuracy train")
-  plt.plot(accuracy_test, label="accuracy test")
+  plt.plot(accuracy_train, label="Training")
+  plt.plot(accuracy_test, label="Testing")
+  plt.title(mlp.name + " - Accuracy curves")
   plt.legend()
+  plt.grid()
+  plt.savefig("fig/" + mlp.name + "_Accuracy.jpg", dpi=1200)
   plt.show()
 
 from sklearn.utils import shuffle
