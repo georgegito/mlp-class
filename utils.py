@@ -73,3 +73,50 @@ def disp_results(mlp, X_train, y_train, X_test, y_test, history):
   plt.legend()
   plt.show()
 
+from sklearn.utils import shuffle
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.utils import to_categorical
+
+def preprocess(X_train, y_train, X_test, y_test, num_classes, num_features, print_summary=True):
+
+  # convert to float32
+  X_train = np.array(X_train, np.float32)
+  X_test = np.array(X_test, np.float32)
+
+  # concatenate all data
+  X = np.concatenate([X_train, X_test])
+  y = np.concatenate([y_train, y_test])
+
+  # shuffle data
+  X, y = shuffle(X, y)
+
+  # split data
+  X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8, test_size=0.2, random_state=0)
+
+  # vectorize images
+  X_train = X_train.reshape([-1, num_features])
+  X_test = X_test.reshape([-1, num_features])
+
+  # normalize images values from [0, 255] to [0, 1]
+  X_train = X_train / 255.
+  X_test = X_test / 255.
+
+  # Convert target classes to categorical ones (one-hot encoding)
+  y_train = to_categorical(y_train, num_classes)
+  y_test = to_categorical(y_test, num_classes)
+
+
+  if print_summary:
+    print("Training Inputs:")
+    data_summary(X_train)
+
+    print("Testing Inputs:")
+    data_summary(X_test)
+
+    print("Training Outputs:")
+    data_summary(y_train)
+
+    print("Testing Outputs:")
+    data_summary(y_test)
+
+  return X_train, y_train, X_test, y_test
