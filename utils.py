@@ -83,7 +83,6 @@ def disp_results(mlp, X_train, y_train, X_test, y_test, history):
 
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.utils import to_categorical
 
 def preprocess(X_train, y_train, X_test, y_test, num_classes, num_features, print_summary=True):
 
@@ -123,3 +122,6 @@ def preprocess(X_train, y_train, X_test, y_test, num_classes, num_features, prin
     data_summary(y_test)
 
   return X_train, y_train, X_test, y_test
+
+def predict_classes(model, X):
+    return np.argmax(model.predict(X), axis=1)
