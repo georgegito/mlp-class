@@ -1,6 +1,13 @@
+# ---------------------------------------------------------------------------- #
+#                                   utils.py                                   #
+# ---------------------------------------------------------------------------- #
+
+# --------------------------- display data summary --------------------------- #
+
 import numpy as np
 
 def data_summary(arr):
+
   shape = np.shape(arr)
   min = np.amin(arr)
   max = np.amax(arr)
@@ -15,71 +22,7 @@ def data_summary(arr):
   print("Standard Deviation =", sd)
   print()
 
-from tensorflow import keras
-from keras import Input
-from tensorflow.keras import initializers
-from tensorflow.keras import regularizers
-
-def create_mlp(name, n_hidden_1, n_hidden_2, num_features, num_classes, gaussian_init=False, gaussian_mean=-1, kernel_reg=None, a_reg=-1, dropout_layers=False, dropout_prob=-1, print_summary=False):
-  
-  kwargs = dict()
-  
-  if gaussian_init:
-    kwargs["kernel_initializer"] = initializers.RandomNormal(mean=gaussian_mean)
-
-  if kernel_reg == "l2":
-    kwargs["kernel_regularizer"] = regularizers.l2(a_reg)
-
-  if kernel_reg == "l1":
-    kwargs["kernel_regularizer"] = regularizers.l1(a_reg)
-
-  mlp = keras.Sequential(name=name)
-
-  mlp.add(Input(shape=(num_features,)))
-  mlp.add(keras.layers.Dense(name="hidden_layer_1", units=n_hidden_1, activation="relu", **kwargs))
-  if dropout_layers == True: mlp.add(keras.layers.Dropout(dropout_prob))
-  mlp.add(keras.layers.Dense(name="hidden_layer_2", units=n_hidden_2, activation="relu", **kwargs))
-  if dropout_layers == True: mlp.add(keras.layers.Dropout(dropout_prob))
-  mlp.add(keras.layers.Dense(name="output_layer", units=num_classes, activation="softmax", **kwargs))
-  if dropout_layers == True: mlp.add(keras.layers.Dropout(dropout_prob))
-  
-  if print_summary:
-    mlp.summary()
-
-  return mlp
-
-import matplotlib.pyplot as plt
-
-def disp_results(mlp, X_train, y_train, X_test, y_test, history):
-
-  print("Evaluation on training data:")
-  train_results = mlp.evaluate(X_train, y_train)
-  print("Evaluation on testing data:")
-  test_results = mlp.evaluate(X_test, y_test)
-
-  loss_train = history.history["loss"]
-  loss_test = history.history["val_loss"]
-
-  accuracy_train = history.history["accuracy"]
-  accuracy_test = history.history["val_accuracy"]
-
-  plt.ion()
-
-  plt.plot(loss_train, label="Training")
-  plt.plot(loss_test, label="Testing")
-  plt.title(mlp.name + " - Loss curves")
-  plt.legend()
-  plt.grid()
-  plt.savefig("fig/" + mlp.name + "_Loss.jpg", dpi=1200)
-  plt.show()
-
-  plt.plot(accuracy_train, label="Training")
-  plt.plot(accuracy_test, label="Testing")
-  plt.title(mlp.name + " - Accuracy curves")
-  plt.legend()
-  plt.grid()
-  plt.savefig("fig/" + mlp.name + "_Accuracy.jpg", dpi=1200)
-  plt.show()
+# ----------------------------- pre-process data ----------------------------- #
 
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
@@ -123,5 +66,82 @@ def preprocess(X_train, y_train, X_test, y_test, num_classes, num_features, prin
 
   return X_train, y_train, X_test, y_test
 
+
+# ------------------------- display training results ------------------------- #
+
+import matplotlib.pyplot as plt
+
+def disp_results(mlp, X_train, y_train, X_test, y_test, history):
+
+  print("Evaluation on training data:")
+  train_results = mlp.evaluate(X_train, y_train)
+  print("Evaluation on testing data:")
+  test_results = mlp.evaluate(X_test, y_test)
+
+  loss_train = history.history["loss"]
+  loss_test = history.history["val_loss"]
+
+  accuracy_train = history.history["accuracy"]
+  accuracy_test = history.history["val_accuracy"]
+
+  plt.ion()
+  plt.figure(figsize=(6, 2), dpi=600)
+  plt.plot(loss_train, label="Training", linewidth=0.9)
+  plt.plot(loss_test, label="Testing", linewidth=0.9)
+  plt.title(mlp.name + " - Loss curves")
+  plt.legend()
+  plt.grid()
+  plt.savefig("fig/" + mlp.name + "_Loss.jpg", dpi=1200)
+  plt.show()
+
+  plt.figure(figsize=(6, 2), dpi=600)
+  plt.plot(accuracy_train, label="Training", linewidth=0.9)
+  plt.plot(accuracy_test, label="Testing", linewidth=0.9)
+  plt.title(mlp.name + " - Accuracy curves")
+  plt.legend()
+  plt.grid()
+  plt.savefig("fig/" + mlp.name + "_Accuracy.jpg", dpi=1200)
+  plt.show()
+
+# ----------------------------- create mlp model ----------------------------- #
+
+from tensorflow import keras
+from keras import Input
+from tensorflow.keras import initializers
+from tensorflow.keras import regularizers
+
+def create_mlp(name, n_hidden_1, n_hidden_2, num_features, num_classes, gaussian_init=False, gaussian_mean=-1, kernel_reg=None, a_reg=-1, dropout_layers=False, dropout_prob=-1, print_summary=False):
+  
+  kwargs = dict()
+  
+  if gaussian_init:
+    kwargs["kernel_initializer"] = initializers.RandomNormal(mean=gaussian_mean)
+
+  if kernel_reg == "l2":
+    kwargs["kernel_regularizer"] = regularizers.l2(a_reg)
+
+  if kernel_reg == "l1":
+    kwargs["kernel_regularizer"] = regularizers.l1(a_reg)
+
+  mlp = keras.Sequential(name=name)
+
+  mlp.add(Input(shape=(num_features,)))
+  mlp.add(keras.layers.Dense(name="hidden_layer_1", units=n_hidden_1, activation="relu", **kwargs))
+  if dropout_layers == True: mlp.add(keras.layers.Dropout(dropout_prob))
+  mlp.add(keras.layers.Dense(name="hidden_layer_2", units=n_hidden_2, activation="relu", **kwargs))
+  if dropout_layers == True: mlp.add(keras.layers.Dropout(dropout_prob))
+  mlp.add(keras.layers.Dense(name="output_layer", units=num_classes, activation="softmax", **kwargs))
+  if dropout_layers == True: mlp.add(keras.layers.Dropout(dropout_prob))
+  
+  if print_summary:
+    mlp.summary()
+
+  return mlp
+
+# ------------------------------ predict classes ----------------------------- #
+
 def predict_classes(model, X):
+
     return np.argmax(model.predict(X), axis=1)
+
+# ---------------------------------------------------------------------------- #
